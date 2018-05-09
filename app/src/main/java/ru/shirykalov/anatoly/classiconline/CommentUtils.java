@@ -16,11 +16,11 @@ import static ru.shirykalov.anatoly.classiconline.TinderUtils.loadJSONFromAsset;
 
 public class CommentUtils {
 
-    public static List<Comment> loadComments(Context context) {
+    public static List<Comment> parseComments(String rawJSON) {
         try {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
-            JSONObject object = new JSONObject(loadJSONFromAsset(context, "comments.json"));
+            JSONObject object = new JSONObject(rawJSON);
             List<Comment> commentList = new ArrayList<>();
             JSONArray data = object.getJSONArray("data");
 
@@ -31,6 +31,17 @@ public class CommentUtils {
 
             System.err.println(commentList.get(0).toString());
             return commentList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Comment> loadComments(Context context) {
+        try {
+
+            return parseComments(loadJSONFromAsset(context, "comments.json"));
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
