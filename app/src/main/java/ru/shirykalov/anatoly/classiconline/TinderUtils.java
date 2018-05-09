@@ -14,10 +14,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+public class TinderUtils {
 
 
-    private static final String TAG = "Utils";
+    private static final String TAG = "TinderUtils";
 
     public static List<Profile> loadProfiles(Context context){
         try{
@@ -36,7 +36,7 @@ public class Utils {
         }
     }
 
-    private static String loadJSONFromAsset(Context context, String jsonFileName) {
+    public static String loadJSONFromAsset(Context context, String jsonFileName) {
         String json = null;
         InputStream is=null;
         try {
