@@ -18,10 +18,6 @@ import android.view.View;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
-import java.io.IOException;
-
-import static ru.shirykalov.anatoly.classiconline.CommentUtils.getJsonFromServer;
-
 //import org.asynchttpclient.AsyncCompletionHandler;
 //import org.asynchttpclient.AsyncHttpClient;
 //import org.asynchttpclient.BoundRequestBuilder;
@@ -31,11 +27,7 @@ import static ru.shirykalov.anatoly.classiconline.CommentUtils.getJsonFromServer
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SwipePlaceHolderView mSwipeView;
-    private Context mContext;
-    String jsonString;
-    AsyncTask<Void, Void, Void> mTask;
-
+    private final String url = "https://clonclient.shirykalov.ru/api/comments/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +113,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void tinderComment() {
+        SwipePlaceHolderView mSwipeView;
+        Context mContext;
+
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
         mContext = getApplicationContext();
 
@@ -132,48 +127,14 @@ public class MainActivity extends AppCompatActivity
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
         final SwipePlaceHolderView view = mSwipeView;
-        final String url = "https://clonclient.shirykalov.ru/api/comments/";
-        System.err.println("tinder comment");
 
-        mTask = new AsyncTask<Void, Void, Void> () {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    System.err.println("start do job");
-                    jsonString = getJsonFromServer(url);
-                } catch (IOException e) {
-                    System.err.println("failed");
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                super.onPostExecute(result);
-                mSwipeView.removeAllViews();
-                for (Comment comment : CommentUtils.parseComments(jsonString)) {
-                    mSwipeView.addView(new TinderCommentCard(mContext, comment, mSwipeView));
-                }
-
-            }
-
-        };
-        mTask.execute();
-//        AsyncHttpClient client = Dsl.asyncHttpClient();
-//        BoundRequestBuilder getRequest = client.prepareGet(url);
-//        getRequest.execute(new AsyncCompletionHandler<Object>() {
-//            @Override
-//            public Object onCompleted(Response response) throws Exception {
-//                return response;
-//            }
-//        });
-
+        LoadDataTask loadDataTask = new LoadDataTask(mContext, mSwipeView);
+        loadDataTask.execute(url);
     }
 
     public void tinderCreate() {
+        SwipePlaceHolderView mSwipeView;
+        Context mContext;
 
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
         mContext = getApplicationContext();
