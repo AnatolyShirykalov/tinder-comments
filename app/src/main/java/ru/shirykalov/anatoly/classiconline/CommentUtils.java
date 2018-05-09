@@ -9,6 +9,11 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +40,24 @@ public class CommentUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String getJsonFromServer(String url) throws IOException {
+
+        BufferedReader inputStream = null;
+
+        URL jsonUrl = new URL(url);
+        URLConnection dc = jsonUrl.openConnection();
+
+        dc.setConnectTimeout(5000);
+        dc.setReadTimeout(5000);
+
+        inputStream = new BufferedReader(new InputStreamReader(
+                dc.getInputStream()));
+
+        // read the JSON results into a string
+        String jsonResult = inputStream.readLine();
+        return jsonResult;
     }
 
     public static List<Comment> loadComments(Context context) {

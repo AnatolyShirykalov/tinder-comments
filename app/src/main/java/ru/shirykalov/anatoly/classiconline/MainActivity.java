@@ -1,6 +1,7 @@
 package ru.shirykalov.anatoly.classiconline;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -17,11 +18,24 @@ import android.view.View;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
+import java.io.IOException;
+
+import static ru.shirykalov.anatoly.classiconline.CommentUtils.getJsonFromServer;
+
+//import org.asynchttpclient.AsyncCompletionHandler;
+//import org.asynchttpclient.AsyncHttpClient;
+//import org.asynchttpclient.BoundRequestBuilder;
+//import org.asynchttpclient.Dsl;
+//import org.asynchttpclient.Response;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    String jsonString;
+    AsyncTask<Void, Void, Void> mTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,11 +131,46 @@ public class MainActivity extends AppCompatActivity
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
+        final SwipePlaceHolderView view = mSwipeView;
+        final String url = "https://clonclient.shirykalov.ru/api/comments/";
+        System.err.println("tinder comment");
 
+        mTask = new AsyncTask<Void, Void, Void> () {
 
-        for (Comment comment : CommentUtils.loadComments(this.getApplicationContext())) {
-            mSwipeView.addView(new TinderCommentCard(mContext, comment, mSwipeView));
-        }
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    System.err.println("start do job");
+                    jsonString = getJsonFromServer(url);
+                } catch (IOException e) {
+                    System.err.println("failed");
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                mSwipeView.removeAllViews();
+                for (Comment comment : CommentUtils.parseComments(jsonString)) {
+                    mSwipeView.addView(new TinderCommentCard(mContext, comment, mSwipeView));
+                }
+
+            }
+
+        };
+        mTask.execute();
+//        AsyncHttpClient client = Dsl.asyncHttpClient();
+//        BoundRequestBuilder getRequest = client.prepareGet(url);
+//        getRequest.execute(new AsyncCompletionHandler<Object>() {
+//            @Override
+//            public Object onCompleted(Response response) throws Exception {
+//                return response;
+//            }
+//        });
+
     }
 
     public void tinderCreate() {
@@ -137,7 +186,7 @@ public class MainActivity extends AppCompatActivity
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
-
+        mSwipeView.removeAllViews();
         for (Profile profile : TinderUtils.loadProfiles(this.getApplicationContext())) {
             mSwipeView.addView(new TinderCard(mContext, profile, mSwipeView));
         }
