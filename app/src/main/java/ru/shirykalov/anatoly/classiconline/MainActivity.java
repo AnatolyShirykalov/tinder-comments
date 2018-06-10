@@ -13,9 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+
+import java.net.URI;
+
+import ru.shirykalov.anatoly.classiconline.remote.HttpRemoteManager;
 
 //import org.asynchttpclient.AsyncCompletionHandler;
 //import org.asynchttpclient.AsyncHttpClient;
@@ -88,20 +93,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        SwipePlaceHolderView mSwipeView = findViewById(R.id.swipeView);
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
+            mSwipeView.removeAllViews();
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            mSwipeView.removeAllViews();
 
         } else if (id == R.id.nav_slideshow) {
-            tinderComment();
+            mSwipeView.removeAllViews();
+            tinderComment(getApplicationContext());
         } else if (id == R.id.nav_manage) {
-
+            mSwipeView.removeAllViews();
         } else if (id == R.id.nav_share) {
-
+            mSwipeView.removeAllViews();
         } else if (id == R.id.nav_send) {
-
+            mSwipeView.removeAllViews();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -109,12 +118,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void tinderComment() {
-        SwipePlaceHolderView mSwipeView;
-        Context mContext;
-
-        mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
-        mContext = getApplicationContext();
+    public void tinderComment(Context mContext) {
+        SwipePlaceHolderView mSwipeView = findViewById(R.id.swipeView);
+        TextView text = findViewById(R.id.textView4);
 
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
@@ -123,10 +129,9 @@ public class MainActivity extends AppCompatActivity
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
-        final SwipePlaceHolderView view = mSwipeView;
 
-        LoadDataTask loadDataTask = new LoadDataTask(mContext, mSwipeView);
-        loadDataTask.execute(getString(R.string.remote));
+        LoadDataTask loadDataTask = new LoadDataTask(mContext, mSwipeView, text, new HttpRemoteManager());
+        loadDataTask.execute(URI.create(getString(R.string.remote)));
     }
 
 }
