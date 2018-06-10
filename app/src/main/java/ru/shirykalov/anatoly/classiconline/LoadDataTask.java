@@ -1,10 +1,15 @@
 package ru.shirykalov.anatoly.classiconline;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
 import junit.framework.Assert;
@@ -19,17 +24,15 @@ import ru.shirykalov.anatoly.classiconline.remote.RemoteManager;
 public class LoadDataTask extends AsyncTask<URI, Void, String> {
 
     private WeakReference<Context> contextRef;
-    private WeakReference<SwipePlaceHolderView> viewRef;
     private WeakReference<RemoteManager> remoteManager;
-    private WeakReference<TextView> textRef;
+    private WeakReference<LinearLayout> mainViewRef;
 
     private volatile String errorMessage;
 
-    public LoadDataTask(Context context, SwipePlaceHolderView view, TextView text, RemoteManager remoteManager) {
+    public LoadDataTask(Context context, RemoteManager remoteManager, LinearLayout mainView) {
         this.contextRef = new WeakReference<>(context);
-        this.viewRef = new WeakReference<>(view);
         this.remoteManager = new WeakReference<>(remoteManager);
-        this.textRef = new WeakReference<>(text);
+        this.mainViewRef = new WeakReference<>(mainView);
     }
 
     @Override
@@ -49,32 +52,55 @@ public class LoadDataTask extends AsyncTask<URI, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        SwipePlaceHolderView view = viewRef.get();
         Context context = contextRef.get();
-        if (view == null || context == null) return;
-        view.removeAllViews();
+        LinearLayout mainView = mainViewRef.get();
+        if (mainView == null || context == null) return;
+        mainView.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        View inflate = inflater.inflate(R.layout.tinder_view, null);
+        SwipePlaceHolderView view = (SwipePlaceHolderView) inflate;
+        view.getBuilder()
+                .setDisplayViewCount(3)
+                .setSwipeDecor(new SwipeDecor()
+                        .setPaddingTop(20)
+                        .setRelativeScale(0.01f)
+                        .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
+                        .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
+
         List<Comment> comments = CommentUtils.parseComments(s);
 
         Assert.assertNotNull("Comments shouldn't be null", comments);
 
         for (Comment comment : comments) {
-            view.addView(new TinderCommentCard(context, comment, view));
+            try {
+                view.addView(new TinderCommentCard(context, comment, view));
+            } catch (Exception e) {
+                System.err.println("Comment: " + comment + "; View: " + view);
+            }
         }
 
+        mainView.addView(view);
     }
 
     @Override
     protected void onCancelled(String s) {
-        TextView text = textRef.get();
-        if (text == null) return;
-        text.setText(this.errorMessage);
+        Context context = contextRef.get();
+        LinearLayout mainView = mainViewRef.get();
+
+        if (context == null || mainView == null) return;
+        mainView.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.error_view, null);
+        mainView.addView(view);
+
+        ((TextView) view).setText(errorMessage);
     }
 
     public WeakReference<Context> getContextRef() {
         return contextRef;
-    }
-
-    public WeakReference<SwipePlaceHolderView> getViewRef() {
-        return viewRef;
     }
 }

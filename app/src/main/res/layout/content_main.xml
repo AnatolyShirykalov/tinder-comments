@@ -16,28 +16,12 @@
         android:background="@color/grey">
 
         <LinearLayout
+            android:id="@+id/mainLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="24sp"
-                android:textStyle="bold" />
 
-            <com.mindorks.placeholderview.SwipePlaceHolderView
-                android:id="@+id/swipeView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-            </com.mindorks.placeholderview.SwipePlaceHolderView>
         </LinearLayout>
 
     </FrameLayout>

@@ -28,8 +28,6 @@ public class CommentUtils {
                 Comment comment = gson.fromJson(data.getString(i), Comment.class);
                 commentList.add(comment);
             }
-
-            System.err.println(commentList.get(0).toString());
             return commentList;
         } catch (Exception e) {
             e.printStackTrace();
