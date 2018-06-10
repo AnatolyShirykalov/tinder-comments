@@ -15,6 +15,8 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
+import ru.shirykalov.anatoly.classiconline.remote.HttpRemoteManager;
+
 @Layout(R.layout.tinder_comment_view)
 public class TinderCommentCard {
 
@@ -40,26 +42,17 @@ public class TinderCommentCard {
     @SwipeOut
     private void onSwipedOut(){
         Log.d("EVENT", "onSwipedOut");
-        mSwipeView.addView(this);
-    }
-
-    @SwipeCancelState
-    private void onSwipeCancelState(){
-        Log.d("EVENT", "onSwipeCancelState");
+        String payload = "{\"declined\":["+comment.getId()+"],\"approved\":[]}";
+        Log.d("POST", payload);
+        new PostDataTask(mContext).execute(payload);
     }
 
     @SwipeIn
-    private void onSwipeIn(){
+    private void onSwipedIn(){
         Log.d("EVENT", "onSwipedIn");
+        String payload = "{\"approved\":["+comment.getId()+"],\"declined\":[]}";
+        Log.d("POST", payload);
+        new PostDataTask(mContext).execute(payload);
     }
 
-    @SwipeInState
-    private void onSwipeInState(){
-        Log.d("EVENT", "onSwipeInState");
-    }
-
-    @SwipeOutState
-    private void onSwipeOutState(){
-        Log.d("EVENT", "onSwipeOutState");
-    }
 }

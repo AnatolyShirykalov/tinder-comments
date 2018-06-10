@@ -1,7 +1,5 @@
 package ru.shirykalov.anatoly.classiconline;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -11,8 +9,6 @@ import android.widget.TextView;
 
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
-
-import junit.framework.Assert;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -70,19 +66,20 @@ public class LoadDataTask extends AsyncTask<URI, Void, String> {
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
         List<Comment> comments = CommentUtils.parseComments(s);
-
-        Assert.assertNotNull("Comments shouldn't be null", comments);
+        if (comments == null) {
+            errorMessage = "Comments are null";
+            onCancelled("");
+            return;
+        }
 
         for (Comment comment : comments) {
-            try {
-                view.addView(new TinderCommentCard(context, comment, view));
-            } catch (Exception e) {
-                System.err.println("Comment: " + comment + "; View: " + view);
-            }
+            view.addView(new TinderCommentCard(context, comment, view));
         }
 
         mainView.addView(view);
     }
+
+
 
     @Override
     protected void onCancelled(String s) {
