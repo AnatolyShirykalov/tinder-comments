@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ClassicOnline</string>
 
+    <string name="remote">https://clonclient.shirykalov.ru/api/comments/</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

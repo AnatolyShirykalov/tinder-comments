@@ -1,7 +1,6 @@
 package ru.shirykalov.anatoly.classiconline;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -26,8 +25,6 @@ import com.mindorks.placeholderview.SwipePlaceHolderView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    private final String url = "https://clonclient.shirykalov.ru/api/comments/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            tinderCreate();
+
         } else if (id == R.id.nav_slideshow) {
             tinderComment();
         } else if (id == R.id.nav_manage) {
@@ -129,28 +126,7 @@ public class MainActivity extends AppCompatActivity
         final SwipePlaceHolderView view = mSwipeView;
 
         LoadDataTask loadDataTask = new LoadDataTask(mContext, mSwipeView);
-        loadDataTask.execute(url);
-    }
-
-    public void tinderCreate() {
-        SwipePlaceHolderView mSwipeView;
-        Context mContext;
-
-        mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
-        mContext = getApplicationContext();
-
-        mSwipeView.getBuilder()
-                .setDisplayViewCount(3)
-                .setSwipeDecor(new SwipeDecor()
-                        .setPaddingTop(20)
-                        .setRelativeScale(0.01f)
-                        .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
-                        .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
-
-        mSwipeView.removeAllViews();
-        for (Profile profile : TinderUtils.loadProfiles(this.getApplicationContext())) {
-            mSwipeView.addView(new TinderCard(mContext, profile, mSwipeView));
-        }
+        loadDataTask.execute(getString(R.string.remote));
     }
 
 }

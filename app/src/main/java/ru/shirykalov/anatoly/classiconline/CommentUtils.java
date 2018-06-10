@@ -1,8 +1,5 @@
 package ru.shirykalov.anatoly.classiconline;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,8 +13,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ru.shirykalov.anatoly.classiconline.TinderUtils.loadJSONFromAsset;
 
 public class CommentUtils {
 
@@ -58,16 +53,5 @@ public class CommentUtils {
         // read the JSON results into a string
         String jsonResult = inputStream.readLine();
         return jsonResult;
-    }
-
-    public static List<Comment> loadComments(Context context) {
-        try {
-
-            return parseComments(loadJSONFromAsset(context, "comments.json"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
